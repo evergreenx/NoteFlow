@@ -13,17 +13,17 @@ export interface Database {
       folders: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string | null
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string | null
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string | null
         }
         Relationships: []
@@ -70,6 +70,38 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["username"]
+          }
+        ]
+      }
+      notes: {
+        Row: {
+          content: string | null
+          created_at: string
+          folderid: string | null
+          id: number
+          title: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          folderid?: string | null
+          id?: number
+          title?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          folderid?: string | null
+          id?: number
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_folderid_fkey"
+            columns: ["folderid"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
           }
         ]
       }
