@@ -3,30 +3,22 @@ import React, { useEffect, useState } from "react";
 import FolderSidebar from "./foldersidebar";
 import NoteSidebar from "./notesidebar";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import useSupabaseBrowser from '@/utils/supabase-browser'
+import useSupabaseBrowser from "@/utils/supabase-browser";
 import { getFolders } from "@/queries/get-folders";
+import { getNotes } from "@/queries/get-notes";
 export const folderList = [
   { id: 1, name: "Personal" },
   { id: 2, name: "Work" },
   { id: 3, name: "Project X" },
 ];
 
-
-
 export default function Sidebar() {
+  const supabase = useSupabaseBrowser();
 
-
-
-
-  const supabase = useSupabaseBrowser()
- const {data , isError , isLoading} =  useQuery(getFolders(supabase))
-
+  const { data, isError, isLoading } = useQuery(getFolders(supabase), {
+    queryKey: ["folders"],
+  });
   const [folders, setFolders] = useState(data);
-
-  console.log(folders)
-
-  console.log(data)
-
 
   const [note, setNote] = useState([
     {
@@ -74,16 +66,36 @@ export default function Sidebar() {
     content: "Milk, eggs, bread",
   });
 
-  const [selectedFolder, setSelectedFolder] = useState(1);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     setSelectedFolder(data[0]?.id);
+  //   }
+  // }, [data]);
 
   const [filteredNotes, setFilteredNotes] = useState([]);
 
+  const {
+    data: noteData,
+    isError: noteError,
+    isLoading: noteIsLoading,
+    isFetching: noteIsFetching,
+    isRefetching: noteRefetching,
 
+    refetch,
+  } = useQuery(getNotes(supabase, selectedFolder), {
+    queryKey: ["notes", selectedFolder],
 
+    enabled: !!selectedFolder,
+    retry: 1,
+  });
+
+  console.log(selectedFolder);
 
   // useEffect(() => {
-  //   const filteredNotes = note.filter(
-  //     (note) => note.folderId.id === selectedFolder
+  //   const filteredNotes = data?.filter(
+  //     (note) => note.folderid. === selectedFolder
   //   );
   //   setFilteredNotes(filteredNotes);
 
@@ -96,27 +108,25 @@ export default function Sidebar() {
   //   }
   // }, [selectedFolder, note]);
 
-
-
-
-
-
-
   return (
     <div className=" flex h-screen  ">
       <FolderSidebar
-      isLoading ={isLoading}
+        isLoading={isLoading}
         setSelectedFolder={setSelectedFolder}
         selectedFolder={selectedFolder}
         folders={data}
         setFolders={setFolders}
         setNote={setNote}
         note={note}
+        refetch={refetch}
       />
 
-      
-
-      <NoteSidebar notes={filteredNotes} />
+      <NoteSidebar
+        isLoading={noteIsLoading || noteIsFetching || noteRefetching}
+        noteIsFetching={noteIsFetching}
+        selectedFolder={selectedFolder}
+        notes={noteData}
+      />
     </div>
   );
 }
