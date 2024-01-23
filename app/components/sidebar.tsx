@@ -23,6 +23,11 @@ export default function Sidebar() {
 
   const [folders, setFolders] = useState(data);
 
+  console.log(folders)
+
+  console.log(data)
+
+
   const [note, setNote] = useState([
     {
       id: 101,
@@ -76,36 +81,34 @@ export default function Sidebar() {
 
 
 
-  useEffect(() => {
-    const filteredNotes = note.filter(
-      (note) => note.folderId.id === selectedFolder
-    );
-    setFilteredNotes(filteredNotes);
+  // useEffect(() => {
+  //   const filteredNotes = note.filter(
+  //     (note) => note.folderId.id === selectedFolder
+  //   );
+  //   setFilteredNotes(filteredNotes);
 
-    // Optionally, update selectedNote based on the first note in filteredNotes
-    if (filteredNotes.length > 0) {
-      setSelectedNote(filteredNotes[0]);
-    } else {
-      // Handle the case where there are no notes in the selected folder
-      setSelectedNote(null);
-    }
-  }, [selectedFolder, note]);
-
-
+  //   // Optionally, update selectedNote based on the first note in filteredNotes
+  //   if (filteredNotes.length > 0) {
+  //     setSelectedNote(filteredNotes[0]);
+  //   } else {
+  //     // Handle the case where there are no notes in the selected folder
+  //     setSelectedNote(null);
+  //   }
+  // }, [selectedFolder, note]);
 
 
-  if(isLoading) {
-    return <h1>loading</h1>
-  }
+
+
 
 
 
   return (
     <div className=" flex h-screen  ">
       <FolderSidebar
+      isLoading ={isLoading}
         setSelectedFolder={setSelectedFolder}
         selectedFolder={selectedFolder}
-        folders={folders}
+        folders={data}
         setFolders={setFolders}
         setNote={setNote}
         note={note}

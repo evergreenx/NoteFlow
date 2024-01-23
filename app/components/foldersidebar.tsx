@@ -1,10 +1,12 @@
 import React from "react";
+import { RotatingLines } from "react-loader-spinner";
 
 export default function FolderSidebar({
   folders,
   selectedFolder,
   setSelectedFolder,
   setFolders,
+  isLoading,
   setNote,
   note
 }) {
@@ -129,6 +131,23 @@ export default function FolderSidebar({
           </g>
         </svg>
       </div>
+
+{
+  isLoading ? <RotatingLines
+  visible={true}
+  height="96"
+  width="96"
+  color="grey"
+  strokeWidth="5"
+  animationDuration="0.75"
+  ariaLabel="rotating-lines-loading"
+  wrapperStyle={{}}
+  wrapperClass=""
+  />
+ : null
+}
+
+
 
       {folders?.map((i) => {
         return (
