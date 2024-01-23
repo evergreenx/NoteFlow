@@ -36,14 +36,14 @@ export default function FolderSidebar({
       queryClient.invalidateQueries({ queryKey: ["folders"] });
     },
   });
-https://www.youtube.com/watch?v=H-sFluixjjQ&pp=ygUTbmlnZXJpYSB2cyBjYW1lcm9vbg%3D%3D
+
   const mutationnotes = useMutation({
     mutationFn: (newTodo) => {
       return supabase.from("notes").insert({
-      content: 'gghghhgg',
-      folderid : selectedFolder
-,
-title : 'new'      });
+        content: "gghghhgg",
+        folderid: selectedFolder,
+        title: "new",
+      });
     },
 
     onSuccess: () => {
@@ -93,13 +93,11 @@ title : 'new'      });
         </div>
 
         <button
-        
-        onClick={()=>{
-
-          mutationnotes.mutateAsync()
-        }}
-        
-        className="font-semibold h-[40px]  items-center flex rounded justify-center w-full text-white bg-[#1C1C1C] mb-[30px] p-[10px]">
+          onClick={() => {
+            mutationnotes.mutateAsync();
+          }}
+          className="font-semibold h-[40px]  items-center flex rounded justify-center w-full text-white bg-[#1C1C1C] mb-[30px] p-[10px]"
+        >
           <svg
             className="mr-2"
             width="21"
@@ -186,21 +184,34 @@ title : 'new'      });
         return (
           <div
             onClick={() => {
-
               if (i.id) {
                 setSelectedFolder(i.id);
-          
               }
-         
             }}
-            className={`text-xl cursor-pointer text-white  
-          // ${selectedFolder === i.id && "bg-[#312EB5]"}
+            className={`text-xl cursor-pointer text-white  flex space-x-4 items-center
+         ${selectedFolder === i.id && "bg-[#312EB5]"}
           
           p-3`}
             key={i.id}
           >
-            {i.name}
-            {i.id}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3.33335 16.6667H16.6667C17.1087 16.6667 17.5326 16.4911 17.8452 16.1785C18.1578 15.866 18.3334 15.442 18.3334 15V6.66667C18.3334 6.22464 18.1578 5.80072 17.8452 5.48816C17.5326 5.17559 17.1087 5 16.6667 5H10.0584C9.78384 4.99858 9.51393 4.92937 9.2726 4.79853C9.03127 4.66769 8.826 4.47927 8.67502 4.25L7.99169 3.25C7.84071 3.02073 7.63543 2.83231 7.39411 2.70147C7.15278 2.57063 6.88287 2.50142 6.60835 2.5H3.33335C2.89133 2.5 2.4674 2.67559 2.15484 2.98816C1.84228 3.30072 1.66669 3.72464 1.66669 4.16667V15C1.66669 15.9167 2.41669 16.6667 3.33335 16.6667Z"
+                stroke="white"
+                stroke-opacity="0.6"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+            <p>{i.name}</p>
           </div>
         );
       })}

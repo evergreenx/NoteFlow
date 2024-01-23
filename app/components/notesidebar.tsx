@@ -8,6 +8,7 @@ import useSupabaseBrowser from "@/utils/supabase-browser";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { RotatingLines } from "react-loader-spinner";
 
+import { formatDistance, subDays } from "date-fns";
 export default function NoteSidebar({ notes, selectedFolder, isLoading }) {
   return (
     <div>
@@ -29,7 +30,13 @@ export default function NoteSidebar({ notes, selectedFolder, isLoading }) {
         ) : (
           notes?.map((i) => {
             return (
-              <NoteItem id={i.id} key={i.id} title={i.title} desc={i.content} />
+              <NoteItem
+                id={i.id}
+                key={i.id}
+                title={i.title}
+                desc={i.content}
+                createdAt={i.created_at}
+              />
             );
           })
         )}
@@ -38,15 +45,13 @@ export default function NoteSidebar({ notes, selectedFolder, isLoading }) {
   );
 }
 
-const NoteItem = ({ title, desc, id }) => {
+const NoteItem = ({ title, desc, id, createdAt }) => {
   const paaramsid = useParams();
 
   return (
     <Link href={`/note/${id}`}>
-      {id}
-      {title}
       <div
-        className={` 
+        className={` hover:bg-[#ffffff1a]
         
   ${paaramsid.id === id.toString() ? "bg-[#ffffff1a]" : "bg-[#ffffff08]"}
         
@@ -54,7 +59,9 @@ const NoteItem = ({ title, desc, id }) => {
       >
         {title}
         <div className="mt-[10px] flex justify-between text-[#ffffff99]">
-          <p className=" text-base font-normal">{"21/06/2022"}</p>
+          <p className=" text-base font-normal">
+            {formatDistance(createdAt, new Date(), { addSuffix: true })}
+          </p>
           <p className=" text-base font-normal tracking-tighter">
             {desc.slice(0, 16)}.....
           </p>

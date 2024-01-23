@@ -68,11 +68,11 @@ export default function Sidebar() {
 
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setSelectedFolder(data[0]?.id);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data) {
+      setSelectedFolder(data[0]?.id);
+    }
+  }, [data]);
 
   const [filteredNotes, setFilteredNotes] = useState([]);
 
