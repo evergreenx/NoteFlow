@@ -14,25 +14,37 @@ export default function Sidebar() {
   const [note, setNote] = useState([
     {
       id: 101,
-      folderId: 1,
+      folderId: {
+        id: 1,
+        title: "Personal",
+      },
       title: "Grocery List",
       content: "Milk, eggs, bread",
     },
     {
       id: 102,
-      folderId: 1,
+      folderId: {
+        id: 1,
+        title: "Personal",
+      },
       title: "Fitness Plan",
       content: "Monday: Jogging, Tuesday: Gym",
     },
     {
       id: 103,
-      folderId: 2,
+      folderId: {
+        id: 2,
+        title: "work",
+      },
       title: "Meeting Agenda",
       content: "Discuss quarterly goals",
     },
     {
       id: 104,
-      folderId: 3,
+      folderId: {
+        id: 3,
+        title: "project x",
+      },
       title: "Project X Tasks",
       content: "Task 1: Research, Task 2: Planning",
     },
@@ -51,7 +63,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const filteredNotes = note.filter(
-      (note) => note.folderId === selectedFolder
+      (note) => note.folderId.id === selectedFolder
     );
     setFilteredNotes(filteredNotes);
 
@@ -71,6 +83,8 @@ export default function Sidebar() {
         selectedFolder={selectedFolder}
         folders={folders}
       />
+
+      
 
       <NoteSidebar notes={filteredNotes} />
     </div>

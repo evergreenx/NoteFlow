@@ -7,7 +7,7 @@ export default function FolderSidebar({
 }) {
   return (
     <div className="w-[300px] h-screen py-[30px] bg-[#181818] ">
-      <div className="p-[20px]">
+      <div className="px-[20px]">
         <div className="mb-[30px] ">
           <svg
             width="101"
@@ -42,7 +42,7 @@ export default function FolderSidebar({
           </svg>
         </div>
 
-        <button className="font-semibold   items-center flex rounded justify-center w-full text-white bg-[#1C1C1C] mb-[30px] p-[10px]">
+        <button className="font-semibold h-[40px]  items-center flex rounded justify-center w-full text-white bg-[#1C1C1C] mb-[30px] p-[10px]">
           <svg
             className="mr-2"
             width="21"
