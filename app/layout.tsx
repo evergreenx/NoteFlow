@@ -1,3 +1,4 @@
+import { ReactQueryClientProvider } from "./RQ/ReactQueryClientProvider";
 import NoteSidebar from "./components/notesidebar";
 import Sidebar from "./components/sidebar";
 import "./globals.css";
@@ -16,6 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+
+    <ReactQueryClientProvider>
     <html lang="en">
       <body className={inter.className}>
         <div className="flex">
@@ -31,5 +34,7 @@ export default function RootLayout({
         </div>
       </body>
     </html>
+
+    </ReactQueryClientProvider>
   );
 }

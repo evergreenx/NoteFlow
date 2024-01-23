@@ -2,14 +2,26 @@
 import React, { useEffect, useState } from "react";
 import FolderSidebar from "./foldersidebar";
 import NoteSidebar from "./notesidebar";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import useSupabaseBrowser from '@/utils/supabase-browser'
+import { getFolders } from "@/queries/get-folders";
 export const folderList = [
   { id: 1, name: "Personal" },
   { id: 2, name: "Work" },
   { id: 3, name: "Project X" },
 ];
 
+
+
 export default function Sidebar() {
-  const [folders, setFolders] = useState(folderList);
+
+
+
+
+  const supabase = useSupabaseBrowser()
+ const {data , isError , isLoading} =  useQuery(getFolders(supabase))
+
+  const [folders, setFolders] = useState(data);
 
   const [note, setNote] = useState([
     {
@@ -61,6 +73,9 @@ export default function Sidebar() {
 
   const [filteredNotes, setFilteredNotes] = useState([]);
 
+
+
+
   useEffect(() => {
     const filteredNotes = note.filter(
       (note) => note.folderId.id === selectedFolder
@@ -76,12 +91,24 @@ export default function Sidebar() {
     }
   }, [selectedFolder, note]);
 
+
+
+
+  if(isLoading) {
+    return <h1>loading</h1>
+  }
+
+
+
   return (
     <div className=" flex h-screen  ">
       <FolderSidebar
         setSelectedFolder={setSelectedFolder}
         selectedFolder={selectedFolder}
         folders={folders}
+        setFolders={setFolders}
+        setNote={setNote}
+        note={note}
       />
 
       
