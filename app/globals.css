@@ -2,3 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+.editorClassName {
+
+
+    color: white;
+}
+.toolbarClassName {
+
+    background: transparent !important;
+    border: none !important;
+}
