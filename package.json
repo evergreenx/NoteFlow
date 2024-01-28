@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-separator": "^1.0.3",
     "@supabase-cache-helpers/postgrest-react-query": "^1.4.0",
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.39.3",
