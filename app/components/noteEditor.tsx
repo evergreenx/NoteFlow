@@ -21,6 +21,7 @@ export default function NoteEditor() {
       
       <Editor
       spellCheck
+      
         editorState={editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
