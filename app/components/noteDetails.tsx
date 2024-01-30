@@ -1,36 +1,69 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import * as Separator from "@radix-ui/react-separator";
 import useSupabaseBrowser from "@/utils/supabase-browser";
 import { getNotes } from "@/queries/get-notes";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import {
+  useDeleteMutation,
+  useQuery,
+} from "@supabase-cache-helpers/postgrest-react-query";
 import { getNote } from "@/queries/get-note";
 import { format, formatDate, parseJSON } from "date-fns";
 import { NoteDropMenu } from "./dropmenu";
 import NoteEditor from "./noteEditor";
 import { getFolder } from "@/queries/get-folder";
-
+import { TypedSupabaseClient } from "@/utils/types";
+import { useRouter } from "next/navigation";
 
 export default function NoteDetails({ params }) {
   const supabase = useSupabaseBrowser();
   const { data: noteData } = useQuery(getNote(supabase, params.id), {});
 
-  const {data : FolderData} = useQuery(getFolder(supabase , noteData?.folderid) ,{
+  const { data: FolderData } = useQuery(
+    getFolder(supabase, noteData?.folderid),
+    {
+      enabled: !!noteData?.id,
+    }
+  );
 
-    enabled : !!noteData?.id
-  })
+  const [noteTitle, setNoteTitle] = useState();
+  const router = useRouter();
 
-  console.log(FolderData)
+  const { mutate: deletex } = useDeleteMutation(
+    supabase.from("notes"),
+    ["id"],
+    "id",
+    {
+      onSuccess: () => {
+        console.log("deleted");
+      },
+    }
+  );
 
-  console.log(params);
-
-  console.log(noteData, "data");
   return (
     <div className=" ">
       <div className=" flex justify-between items-center mb-[30px]">
-        <h1 className="text-[32px] font-semibold text-white">
-          {noteData?.title}
-        </h1>
+        <button
+          onClick={() => {
+            deletex({
+              id: params.id,
+            });
+          }}
+        >
+          delete
+        </button>
+
+        {noteData?.title && (
+          <input
+            type="text"
+            value={noteTitle}
+            defaultValue={noteData.title}
+            onChange={(e) => {
+              setNoteTitle(e.target.value);
+            }}
+            className="text-[32px] font-semibold text-white bg-transparent outline-none border-none"
+          />
+        )}
 
         <NoteDropMenu />
       </div>
@@ -124,8 +157,6 @@ export default function NoteDetails({ params }) {
         <div className="text-white text-sm font-semibold underline">
           {noteData?.created_at && format(noteData?.created_at, "yyyy-MM-dd")}
         </div>
-
-
       </div>
       <Separator.Root
         className="bg-white  opacity-10  h-[1px] data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]"
@@ -167,8 +198,7 @@ export default function NoteDetails({ params }) {
         orientation="horizontal"
       />
 
-
-<NoteEditor content={noteData?.content} />
+      <NoteEditor content={noteData?.content} />
     </div>
   );
 }
