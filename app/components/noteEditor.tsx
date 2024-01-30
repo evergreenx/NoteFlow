@@ -1,33 +1,29 @@
 "use client";
 import React, { useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
+
 import dynamic from "next/dynamic";
 
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-
-import { EditorState, convertToRaw } from "draft-js";
+import RswEditor from "react-simple-wysiwyg";
 
 export default function NoteEditor() {
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
+  const [value, setValue] = useState("simple text");
 
-  const onEditorStateChange = (editorState) => {
-    setEditorState(editorState);
-    return console.log(editorState);
-  };
+  function onChange(e) {
+    setValue(e.target.value);
+  }
+
+  console.log(value);
   return (
     <div>
-      
-      <Editor
-      spellCheck
-      
-        editorState={editorState}
-        toolbarClassName="toolbarClassName"
-        wrapperClassName="wrapperClassName"
-        editorClassName="editorClassName"
-        onEditorStateChange={onEditorStateChange}
-      />
+  
+
+      <div className="prose  prose:text-white prose-headings:text-white">
+        <RswEditor
+          containerProps={{ style: { resize: "horizontal" } }}
+          value={value}
+          onChange={onChange}
+        ></RswEditor>
+      </div>
     </div>
   );
 }
