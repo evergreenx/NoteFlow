@@ -53,7 +53,7 @@ const NoteItem = ({ title, desc, id, createdAt }) => {
       <div
         className={` hover:bg-[#ffffff1a]
         
-  ${paaramsid.id === id.toString() ? "bg-[#ffffff1a]" : "bg-[#ffffff08]"}
+  ${paaramsid.id === id?.toString() ? "bg-[#ffffff1a]" : "bg-[#ffffff08]"}
         
         rounded-[3px] text-lg mb-[20px] text-white cursor-pointer  p-5`}
       >
@@ -63,7 +63,7 @@ const NoteItem = ({ title, desc, id, createdAt }) => {
             {formatDistance(createdAt, new Date(), { addSuffix: true })}
           </p>
           <p className=" text-base font-normal tracking-tighter">
-            {desc.slice(0, 16)}.....
+            {/* {desc.slice(0, 16)}..... */}
           </p>
         </div>
       </div>

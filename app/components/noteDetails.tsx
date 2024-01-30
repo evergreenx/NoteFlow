@@ -1,10 +1,40 @@
 "use client";
 import React from "react";
 import * as Separator from "@radix-ui/react-separator";
+import useSupabaseBrowser from "@/utils/supabase-browser";
+import { getNotes } from "@/queries/get-notes";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { getNote } from "@/queries/get-note";
+import { format, formatDate, parseJSON } from "date-fns";
+import { NoteDropMenu } from "./dropmenu";
+import NoteEditor from "./noteEditor";
+import { getFolder } from "@/queries/get-folder";
 
-export default function NoteDetails() {
+
+export default function NoteDetails({ params }) {
+  const supabase = useSupabaseBrowser();
+  const { data: noteData } = useQuery(getNote(supabase, params.id), {});
+
+  const {data : FolderData} = useQuery(getFolder(supabase , noteData?.folderid) ,{
+
+    enabled : !!noteData?.id
+  })
+
+  console.log(FolderData)
+
+  console.log(params);
+
+  console.log(noteData, "data");
   return (
-    <div className="mt-[30px] ">
+    <div className=" ">
+      <div className=" flex justify-between items-center mb-[30px]">
+        <h1 className="text-[32px] font-semibold text-white">
+          {noteData?.title}
+        </h1>
+
+        <NoteDropMenu />
+      </div>
+
       <div className=" flex items-center space-x-[8px] ">
         <div className="flex items-center space-x-[20px] w-[100px]">
           <svg
@@ -92,16 +122,16 @@ export default function NoteDetails() {
         </div>
 
         <div className="text-white text-sm font-semibold underline">
-          21/06/2022
+          {noteData?.created_at && format(noteData?.created_at, "yyyy-MM-dd")}
         </div>
-      </div>
 
+
+      </div>
       <Separator.Root
         className="bg-white  opacity-10  h-[1px] data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]"
         decorative
         orientation="horizontal"
       />
-
       <div className=" flex items-center space-x-[8px] mb-[15px] ">
         <div className="flex items-center space-x-[20px] w-[100px]">
           <svg
@@ -128,15 +158,17 @@ export default function NoteDetails() {
         </div>
 
         <div className="text-white text-sm font-semibold underline">
-          Personal
+          {FolderData?.name}
         </div>
       </div>
-
       <Separator.Root
         className="bg-white  opacity-10  h-[1px] data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]"
         decorative
         orientation="horizontal"
       />
+
+
+<NoteEditor content={noteData?.content} />
     </div>
   );
 }

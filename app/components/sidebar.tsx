@@ -6,11 +6,6 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import useSupabaseBrowser from "@/utils/supabase-browser";
 import { getFolders } from "@/queries/get-folders";
 import { getNotes } from "@/queries/get-notes";
-export const folderList = [
-  { id: 1, name: "Personal" },
-  { id: 2, name: "Work" },
-  { id: 3, name: "Project X" },
-];
 
 export default function Sidebar() {
   const supabase = useSupabaseBrowser();

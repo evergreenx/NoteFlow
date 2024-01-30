@@ -6,6 +6,7 @@
   border: none !important;
 
   color: white;
+  width: 100%;
 }
 .rsw-toolbar {
   background: transparent !important;
@@ -23,7 +24,7 @@
 .rsw-toolbar .rsw-dd {
 
     color: white;
-    background-color: black;
+    background-color: #181818;
     border: none;
     outline: none;
 }

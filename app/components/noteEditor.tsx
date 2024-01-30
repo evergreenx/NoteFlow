@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 
 import RswEditor from "react-simple-wysiwyg";
 
-export default function NoteEditor() {
-  const [value, setValue] = useState("simple text");
+export default function NoteEditor({content}) {
+  const [value, setValue] = useState(content);
 
   function onChange(e) {
     setValue(e.target.value);
@@ -19,7 +19,7 @@ export default function NoteEditor() {
 
       <div className="prose  prose:text-white prose-headings:text-white">
         <RswEditor
-          containerProps={{ style: { resize: "horizontal" } }}
+          containerProps={{ style: { resize: "vertical" } }}
           value={value}
           onChange={onChange}
         ></RswEditor>

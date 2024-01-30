@@ -18,17 +18,24 @@ export default function FolderSidebar({
   setNote,
   note,
 }) {
-  console.log(folders, "folders");
 
-  console.log(note);
 
-  console.log(selectedFolder, "testt");
+  const adjectives = ['happy', 'sunny', 'funny', 'colorful', 'exciting'];
+const nouns = ['elephant', 'pizza', 'rocket', 'unicorn', 'guitar'];
+
+function generateDummyRepoName() {
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  
+  return `${adjective}${noun}`;
+}
+ 
   const queryClient = useQueryClient();
   const supabase = useSupabaseBrowser();
   const mutation = useMutation({
     mutationFn: (newTodo) => {
       return supabase.from("folders").insert({
-        name: "new folder2",
+        name: generateDummyRepoName(),
       });
     },
 
@@ -211,7 +218,7 @@ export default function FolderSidebar({
               />
             </svg>
 
-            <p>{i.name}</p>
+            <p className="capitalize">{i.name}</p>
           </div>
         );
       })}
