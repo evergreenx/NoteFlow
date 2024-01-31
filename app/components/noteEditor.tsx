@@ -1,25 +1,52 @@
 "use client";
+import useSupabaseBrowser from "@/utils/supabase-browser";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-import dynamic from "next/dynamic";
+import RswEditor, { ContentEditableEvent } from "react-simple-wysiwyg";
 
-import RswEditor from "react-simple-wysiwyg";
+export default function NoteEditor({
+  content,
+  id
+}: {
+  content: string | undefined;
+  id: string
+}) {
+  const supabase = useSupabaseBrowser();
+  const queryClient = useQueryClient()
 
-export default function NoteEditor({content}) {
   const [value, setValue] = useState(content);
 
-  function onChange(e) {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      return await supabase.from("notes").update({
+        content: value,
+      }).eq('id' , id)
+    },
+
+    onSuccess : () => {
+    queryClient.invalidateQueries({ queryKey: ["note"] });
+
+    }
+  });
+
+  function onChange(e: ContentEditableEvent) {
     setValue(e.target.value);
+
+    mutation.mutateAsync();
   }
 
-  console.log(value);
+  // onSuccess: () => {
+  //   queryClient.invalidateQueries({ queryKey: ["folders"] });
+  // },
+
+  console.log(value)
+
   return (
     <div>
-  
-
-      <div className="prose  prose:text-white prose-headings:text-white">
+      <div className=" prose w-full min-w-[90%] overflow-hidden   prose-headings:text-white">
         <RswEditor
-          containerProps={{ style: { resize: "vertical" } }}
+          containerProps={{ style: { resize: "none" } }}
           value={value}
           onChange={onChange}
         ></RswEditor>

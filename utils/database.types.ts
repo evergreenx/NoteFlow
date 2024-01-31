@@ -75,24 +75,24 @@ export interface Database {
       }
       notes: {
         Row: {
-          content: string | null
+          content: string
           created_at: string
           folderid: string | null
-          id: number
+          id: string
           title: string | null
         }
         Insert: {
-          content?: string | null
+          content: string
           created_at?: string
           folderid?: string | null
-          id?: number
+          id?: string
           title?: string | null
         }
         Update: {
-          content?: string | null
+          content?: string
           created_at?: string
           folderid?: string | null
-          id?: number
+          id?: string
           title?: string | null
         }
         Relationships: [

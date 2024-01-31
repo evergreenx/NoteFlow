@@ -3,10 +3,7 @@ import React, { useState } from "react";
 import * as Separator from "@radix-ui/react-separator";
 import useSupabaseBrowser from "@/utils/supabase-browser";
 import { getNotes } from "@/queries/get-notes";
-import {
-  useDeleteMutation,
-  useQuery,
-} from "@supabase-cache-helpers/postgrest-react-query";
+import { useDeleteMutation } from "@supabase-cache-helpers/postgrest-react-query";
 import { getNote } from "@/queries/get-note";
 import { format, formatDate, parseJSON } from "date-fns";
 import { NoteDropMenu } from "./dropmenu";
@@ -14,58 +11,60 @@ import NoteEditor from "./noteEditor";
 import { getFolder } from "@/queries/get-folder";
 import { TypedSupabaseClient } from "@/utils/types";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
-export default function NoteDetails({ params }) {
+export default function NoteDetails({ params }: { params: { id: string } }) {
   const supabase = useSupabaseBrowser();
-  const { data: noteData } = useQuery(getNote(supabase, params.id), {});
+  const {
+    data: noteData,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["note"],
+    queryFn: async () => {
+      const data = await getNote(supabase, params.id);
 
-  const { data: FolderData } = useQuery(
-    getFolder(supabase, noteData?.folderid),
-    {
-      enabled: !!noteData?.id,
-    }
-  );
+      return data.data;
+    },
+  });
 
-  const [noteTitle, setNoteTitle] = useState();
+  console.log(noteData)
+
+  const { data: FolderData } = useQuery({
+    queryKey: ["folder"],
+
+    queryFn: async () => {
+      if (noteData?.folderid) {
+        const data = await getFolder(supabase, noteData?.folderid);
+
+        return data.data;
+      }
+    },
+  });
+
+  const [noteTitle, setNoteTitle] = useState<any>("");
   const router = useRouter();
 
-  const { mutate: deletex } = useDeleteMutation(
-    supabase.from("notes"),
-    ["id"],
-    "id",
-    {
-      onSuccess: () => {
-        console.log("deleted");
-      },
-    }
-  );
+  if (isError && error) {
+    return router.replace("/");
+  }
 
   return (
     <div className=" ">
       <div className=" flex justify-between items-center mb-[30px]">
-        <button
-          onClick={() => {
-            deletex({
-              id: params.id,
-            });
-          }}
-        >
-          delete
-        </button>
-
         {noteData?.title && (
           <input
             type="text"
             value={noteTitle}
-            defaultValue={noteData.title}
-            onChange={(e) => {
+            defaultValue={noteData?.title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNoteTitle(e.target.value);
             }}
             className="text-[32px] font-semibold text-white bg-transparent outline-none border-none"
           />
         )}
 
-        <NoteDropMenu />
+        <NoteDropMenu params={params} />
       </div>
 
       <div className=" flex items-center space-x-[8px] ">
@@ -198,7 +197,7 @@ export default function NoteDetails({ params }) {
         orientation="horizontal"
       />
 
-      <NoteEditor content={noteData?.content} />
+      <NoteEditor id={params.id} content={noteData?.content} />
     </div>
   );
 }

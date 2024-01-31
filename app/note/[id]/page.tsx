@@ -3,7 +3,7 @@ import NoteDetails from "@/app/components/noteDetails";
 import NoteEditor from "@/app/components/noteEditor";
 import { getNote } from "@/queries/get-note";
 import useSupabaseServer from "@/utils/supabase-server";
-import { prefetchQuery } from "@supabase-cache-helpers/postgrest-react-query";
+
 import {
   HydrationBoundary,
   QueryClient,
@@ -19,18 +19,21 @@ export default async function Page({ params }: { params: { id: string } }) {
   const queryClient = new QueryClient();
   const supabase = useSupabaseServer(cookieStore);
 
-  await prefetchQuery(queryClient, getNote(supabase, params.id ),{
+  await queryClient.prefetchQuery({
+    queryKey: ["note"],
+    queryFn: async () => {
+      const data = await getNote(supabase, params.id);
 
+      return data.data;
+    },
+    staleTime : 1,
+    
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="bg-[#181818] h-screen w-full   p-[50px]">
-    
-
+      <div className="bg-[#181818] h-screen w-full overflow-hidden  p-[50px]">
         <NoteDetails params={params} />
-
-     
       </div>
     </HydrationBoundary>
   );

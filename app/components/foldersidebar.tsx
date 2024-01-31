@@ -7,16 +7,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { RotatingLines } from "react-loader-spinner";
 import { TypedSupabaseClient } from "@/utils/types";
+import { Database } from "@/utils/database.types";
 
+
+type folderType = Database['public']['Tables']['folders']['Row']
 export default function FolderSidebar({
-  refetch,
+ 
   folders,
   selectedFolder,
   setSelectedFolder,
-  setFolders,
   isLoading,
-  setNote,
-  note,
+}:{
+
+  folders: folderType[] | undefined | null,
+  selectedFolder  : string,
+  setSelectedFolder : React.Dispatch<React.SetStateAction<string>>,
+  isLoading : boolean
+  
 }) {
 
 
@@ -33,7 +40,7 @@ function generateDummyRepoName() {
   const queryClient = useQueryClient();
   const supabase = useSupabaseBrowser();
   const mutation = useMutation({
-    mutationFn: (newTodo) => {
+    mutationFn: async () => {
       return supabase.from("folders").insert({
         name: generateDummyRepoName(),
       });
@@ -45,11 +52,11 @@ function generateDummyRepoName() {
   });
 
   const mutationnotes = useMutation({
-    mutationFn: (newTodo) => {
+    mutationFn: async () => {
       return supabase.from("notes").insert({
-        content: "gghghhgg",
+        content: "",
         folderid: selectedFolder,
-        title: "new",
+        title: "untitled note",
       });
     },
 
@@ -57,6 +64,27 @@ function generateDummyRepoName() {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
+
+  
+
+
+
+  // const { mutateAsync: insert } = useInsertMutation(
+  //   supabase.from('notes'),
+  //   ['id'],
+  //   null,
+    
+  //   {
+  //     onSuccess: () => console.log('Success!'),
+     
+  //   }
+  // );
+
+
+
+
+
+
 
   const handleCreateFolder = () => {
     mutation.mutate();
@@ -101,7 +129,7 @@ function generateDummyRepoName() {
 
         <button
           onClick={() => {
-            mutationnotes.mutateAsync();
+            mutationnotes.mutateAsync()
           }}
           className="font-semibold h-[40px]  items-center flex rounded justify-center w-full text-white bg-[#1C1C1C] mb-[30px] p-[10px]"
         >
@@ -187,7 +215,7 @@ function generateDummyRepoName() {
         </div>
       ) : null}
 
-      {folders?.map((i) => {
+      {folders &&folders?.map((i) => {
         return (
           <div
             onClick={() => {

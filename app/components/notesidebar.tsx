@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import { folderList } from "./sidebar";
 import { useParams } from "next/navigation";
 import { stringify } from "querystring";
 import { getNotes } from "@/queries/get-notes";
@@ -9,14 +8,25 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { RotatingLines } from "react-loader-spinner";
 
 import { formatDistance, subDays } from "date-fns";
-export default function NoteSidebar({ notes, selectedFolder, isLoading }) {
+import { Database } from "@/utils/database.types";
+
+type db = Database["public"]["Tables"]["notes"]["Row"];
+export default function NoteSidebar({
+  notes,
+  selectedFolder,
+  isLoading,
+}: {
+  notes: db[] | null | undefined;
+  selectedFolder: string | null;
+  isLoading: boolean;
+}) {
   return (
     <div>
       <div className="w-[350px] py-[30px] h-screen     px-5 mb-20 bg-[#1C1C1C]">
         <h1 className="text-[22px] font-semibold text-white mb-[30px] capitalize">
           {/* {title?.folderId.title} */}
         </h1>
-        {isLoading ? (
+        {isLoading && (
           <div className="flex justify-center items-center">
             <RotatingLines
               visible={true}
@@ -27,25 +37,34 @@ export default function NoteSidebar({ notes, selectedFolder, isLoading }) {
               ariaLabel="rotating-lines-loading"
             />
           </div>
-        ) : (
-          notes?.map((i) => {
-            return (
-              <NoteItem
-                id={i.id}
-                key={i.id}
-                title={i.title}
-                desc={i.content}
-                createdAt={i.created_at}
-              />
-            );
-          })
         )}
+
+        {notes
+          ? notes?.map((i) => {
+              return (
+                <NoteItem
+                  id={i.id}
+                  key={i.id}
+                  title={i.title}
+                  createdAt={i.created_at}
+                />
+              );
+            })
+          : null}
       </div>
     </div>
   );
 }
 
-const NoteItem = ({ title, desc, id, createdAt }) => {
+const NoteItem = ({
+  title,
+  id,
+  createdAt,
+}: {
+  title: string | null;
+  id: string;
+  createdAt: string;
+}) => {
   const paaramsid = useParams();
 
   return (

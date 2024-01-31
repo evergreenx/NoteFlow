@@ -2,16 +2,21 @@
 import React, { useEffect, useState } from "react";
 import FolderSidebar from "./foldersidebar";
 import NoteSidebar from "./notesidebar";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+
 import useSupabaseBrowser from "@/utils/supabase-browser";
 import { getFolders } from "@/queries/get-folders";
 import { getNotes } from "@/queries/get-notes";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Sidebar() {
   const supabase = useSupabaseBrowser();
 
-  const { data, isError, isLoading } = useQuery(getFolders(supabase), {
+  const { data, isError, isLoading } = useQuery({
     queryKey: ["folders"],
+    queryFn: async () => {
+      const data = await getFolders(supabase);
+      return data.data;
+    },
   });
   const [folders, setFolders] = useState(data);
 
@@ -54,14 +59,7 @@ export default function Sidebar() {
     },
   ]);
 
-  const [selectedNote, setSelectedNote] = useState({
-    id: 101,
-    folderId: 1,
-    title: "Grocery List",
-    content: "Milk, eggs, bread",
-  });
-
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
 
   useEffect(() => {
     if (data) {
@@ -77,9 +75,11 @@ export default function Sidebar() {
     isLoading: noteIsLoading,
     isFetching: noteIsFetching,
     isRefetching: noteRefetching,
-
-    refetch,
-  } = useQuery(getNotes(supabase, selectedFolder), {
+  } = useQuery({
+    queryFn: async () => {
+      const data = await getNotes(supabase, selectedFolder);
+      return data.data;
+    },
     queryKey: ["notes", selectedFolder],
 
     enabled: !!selectedFolder,
@@ -103,6 +103,10 @@ export default function Sidebar() {
   //   }
   // }, [selectedFolder, note]);
 
+  if (noteError) {
+    console.log(isError);
+  }
+
   return (
     <div className=" flex h-screen  ">
       <FolderSidebar
@@ -110,15 +114,10 @@ export default function Sidebar() {
         setSelectedFolder={setSelectedFolder}
         selectedFolder={selectedFolder}
         folders={data}
-        setFolders={setFolders}
-        setNote={setNote}
-        note={note}
-        refetch={refetch}
       />
 
       <NoteSidebar
         isLoading={noteIsLoading || noteIsFetching || noteRefetching}
-        noteIsFetching={noteIsFetching}
         selectedFolder={selectedFolder}
         notes={noteData}
       />
